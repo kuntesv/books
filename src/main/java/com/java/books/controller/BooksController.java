@@ -1,6 +1,7 @@
 package com.java.books.controller;
 
 import com.java.books.entity.Book;
+import com.java.books.request.BookRequest;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -50,15 +51,19 @@ public class BooksController {
 
 
     @PostMapping
-    public void createBook(@RequestBody Book  newBook)
+    public void createBook(@RequestBody BookRequest bookRequest)
     {
-        for (Book b : books) {
-            if (b.getTitle().equalsIgnoreCase(newBook.getTitle())) {
-                return;
-            }
+        long id ;
+
+        if(books.isEmpty())
+        {
+            id = 1;
+        }else{
+            id = books.get(books.size() -1).getId() + 1;
         }
 
-        books.add(newBook);
+        Book book = convertToBook(id , bookRequest);
+        books.add(book);
     }
 
 
@@ -77,5 +82,10 @@ public class BooksController {
     public List<Book> getBooks() {
 
         return books;
+    }
+
+    private  Book convertToBook(long id, BookRequest bookRequest)
+    {
+        return new Book(id, bookRequest.getTitle(), bookRequest.getAuthor(), bookRequest.getCategory(), bookRequest.getRating());
     }
 }
